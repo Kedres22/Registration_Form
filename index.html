@@ -122,20 +122,14 @@
     <script>
         // JavaScript
         function sendOrder(productName) {
-            const ownerPhone = '0908195656';
-            const message = `I want to buy ${productName}, how much is it?`;
+            const ownerPhone = '0908195656'; // Owner's phone number
+            const message = `I want to buy ${productName}, how much is it?`; // Pre-filled message
 
-            // Show confirmation
-            if (confirm(`Send order request for ${productName}?`)) {
-                // This is a simulation - actual SMS requires backend integration
-                console.log(`SMS sent to ${ownerPhone}: "${message}"`);
-                alert('Your request has been sent! We will contact you shortly.');
-                
-                // For real SMS implementation, you would need to:
-                // 1. Use a backend service (e.g., Node.js/Python)
-                // 2. Integrate with SMS API (e.g., Twilio)
-                // 3. Never expose credentials in frontend code
-            }
+            // Encode the message for the URI
+            const encodedMessage = encodeURIComponent(message);
+
+            // Open the messaging app with the pre-filled message
+            window.location.href = `sms:${ownerPhone}?body=${encodedMessage}`;
         }
     </script>
 </body>
