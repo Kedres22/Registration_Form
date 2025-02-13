@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Store</title>
     <style>
-        /* CSS Styles */
+        /* General Styles */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0 0 60px 0; /* Add padding for footer */
+            padding: 0 0 60px 0;
             background-color: #f4f4f4;
         }
 
@@ -20,17 +20,28 @@
             text-align: center;
         }
 
-        .product-list {
+        .admin-link {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        main {
             max-width: 800px;
             margin: 20px auto;
             padding: 0 20px;
+        }
+
+        .product-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
         .product {
             display: flex;
             align-items: center;
             background-color: #fff;
-            margin-bottom: 20px;
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -42,6 +53,7 @@
             margin-right: 20px;
             border-radius: 5px;
             object-fit: cover;
+            cursor: pointer;
         }
 
         .product-info {
@@ -71,56 +83,201 @@
             width: 100%;
             bottom: 0;
         }
+
+        /* Admin Page Styles */
+        .admin-login, .add-product {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-login h2, .add-product h2 {
+            margin-top: 0;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        form label {
+            font-weight: bold;
+        }
+
+        form input, form textarea, form input[type="file"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        form button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #218838;
+        }
+
+        /* Modal Styles for Image Zoom */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            overflow: auto;
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+            animation: zoom 0.3s;
+        }
+
+        @keyframes zoom {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #bbb;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Our Products</h1>
-    </header>
+    <!-- Main Page -->
+    <div id="main-page">
+        <header>
+            <h1>Our Products</h1>
+            <a href="#" class="admin-link" onclick="showAdminPage()">Admin Login</a>
+        </header>
 
-    <main>
-        <div class="product-list">
-            <!-- Product 1 -->
-            <div class="product">
-                <img src="product1.jpg" alt="Product 1">
-                <div class="product-info">
-                    <h2>Smart Watch</h2>
-                    <p>Price: $199.99</p>
-                    <p>Track your fitness with this advanced smartwatch.</p>
-                    <button onclick="sendOrder('Smart Watch')">Add to Cart</button>
-                </div>
+        <main>
+            <div class="product-list" id="product-list">
+                <!-- Products will be dynamically added here -->
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2023 Tech Store</p>
+        </footer>
+    </div>
+
+    <!-- Admin Page -->
+    <div id="admin-page" style="display: none;">
+        <header>
+            <h1>Admin Panel</h1>
+            <a href="#" class="admin-link" onclick="showMainPage()">Back to Store</a>
+        </header>
+
+        <main>
+            <div class="admin-login">
+                <h2>Admin Sign In</h2>
+                <form id="login-form">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" required>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                    <button type="submit">Sign In</button>
+                </form>
             </div>
 
-            <!-- Product 2 -->
-            <div class="product">
-                <img src="product2.jpg" alt="Product 2">
-                <div class="product-info">
-                    <h2>Wireless Headphones</h2>
-                    <p>Price: $149.99</p>
-                    <p>Premium noise-canceling headphones.</p>
-                    <button onclick="sendOrder('Wireless Headphones')">Add to Cart</button>
-                </div>
+            <div class="add-product" id="add-product" style="display: none;">
+                <h2>Add New Product</h2>
+                <form id="product-form">
+                    <label for="product-name">Product Name:</label>
+                    <input type="text" id="product-name" required>
+                    
+                    <label for="product-price">Price:</label>
+                    <input type="number" id="product-price" required>
+                    
+                    <label for="product-description">Description:</label>
+                    <textarea id="product-description" required></textarea>
+                    
+                    <label for="product-image">Upload Image:</label>
+                    <input type="file" id="product-image" accept="image/*" required>
+                    
+                    <button type="submit">Add Product</button>
+                </form>
             </div>
+        </main>
 
-            <!-- Product 3 -->
-            <div class="product">
-                <img src="product3.jpg" alt="Product 3">
-                <div class="product-info">
-                    <h2>Camera Drone</h2>
-                    <p>Price: $499.99</p>
-                    <p>4K camera with GPS tracking.</p>
-                    <button onclick="sendOrder('Camera Drone')">Add to Cart</button>
-                </div>
-            </div>
-        </div>
-    </main>
+        <footer>
+            <p>&copy; 2023 Tech Store</p>
+        </footer>
+    </div>
 
-    <footer>
-        <p>&copy; 2023 Tech Store</p>
-    </footer>
+    <!-- Image Zoom Modal -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="expandedImg">
+    </div>
 
     <script>
-        // JavaScript
+        // Admin credentials
+        const adminUsername = 'admin';
+        const adminPassword = 'password';
+
+        // Show Admin Page
+        function showAdminPage() {
+            document.getElementById('main-page').style.display = 'none';
+            document.getElementById('admin-page').style.display = 'block';
+        }
+
+        // Show Main Page
+        function showMainPage() {
+            document.getElementById('admin-page').style.display = 'none';
+            document.getElementById('main-page').style.display = 'block';
+            loadProducts(); // Reload products when switching back to the main page
+        }
+
+        // Load products from local storage and display them
+        function loadProducts() {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const productList = document.getElementById('product-list');
+
+            productList.innerHTML = ''; // Clear existing products
+
+            products.forEach((product) => {
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product';
+                productDiv.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}" onclick="openModal('${product.image}')">
+                    <div class="product-info">
+                        <h2>${product.name}</h2>
+                        <p>Price: $${product.price}</p>
+                        <p>${product.description}</p>
+                        <button onclick="sendOrder('${product.name}')">Add to Cart</button>
+                    </div>
+                `;
+                productList.appendChild(productDiv);
+            });
+        }
+
+        // Send order message
         function sendOrder(productName) {
             const ownerPhone = '0908195656'; // Owner's phone number
             const message = `I want to buy ${productName}, how much is it?`; // Pre-filled message
@@ -131,6 +288,71 @@
             // Open the messaging app with the pre-filled message
             window.location.href = `sms:${ownerPhone}?body=${encodedMessage}`;
         }
+
+        // Login form submission
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === adminUsername && password === adminPassword) {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('add-product').style.display = 'block';
+            } else {
+                alert('Invalid username or password');
+            }
+        });
+
+        // Product form submission
+        document.getElementById('product-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const productName = document.getElementById('product-name').value;
+            const productPrice = document.getElementById('product-price').value;
+            const productDescription = document.getElementById('product-description').value;
+            const imageFile = document.getElementById('product-image').files[0];
+
+            // Convert image to Base64
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const product = {
+                    name: productName,
+                    price: productPrice,
+                    description: productDescription,
+                    image: event.target.result // Base64 string
+                };
+
+                // Save product to local storage
+                const products = JSON.parse(localStorage.getItem('products')) || [];
+                products.push(product);
+                localStorage.setItem('products', JSON.stringify(products));
+
+                alert('Product added successfully!');
+                document.getElementById('product-form').reset();
+            };
+            
+            reader.readAsDataURL(imageFile);
+        });
+
+        // Image Zoom Functions
+        function openModal(imgSrc) {
+            document.getElementById('imageModal').style.display = "block";
+            document.getElementById('expandedImg').src = imgSrc;
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = "none";
+        }
+
+        // Close modal when clicking outside the image
+        window.onclick = function(event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Load products when the main page loads
+        window.onload = loadProducts;
     </script>
 </body>
 </html>
